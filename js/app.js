@@ -1,88 +1,28 @@
-function getDataFromLocalStorage(){
-  let data = localStorage.getItem('data');
+import { fetchData } from "./fetch.js";
+import { getDataFromLocalStorage, saveDataInLocalStorage, renderRatingStars, showToast } from "./utils.js";
 
-  return data ? JSON.parse(data) : [];
+const navCart = document.getElementById('navCart');
+const mainContainer = document.getElementById('products-list');
 
-}
-
-function saveDataInLocalStorage(data){
-  localStorage.setItem('data', JSON.stringify(data));
-
-}
-
-function fetchData(){
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-        fetch('https://fakestoreapi.com/products')
-          .then(res => res.json())
-          .then(json => resolve(json)) // El segundo .then nos parsea la respuesta del primer .then a formato JSON.
-          .catch(error => reject(error));
-  
-    }, 100);
-
-  });
-
-}
-
-function renderRatingStars(rating){
-  let maxStars = 5;
-  let starFill = '<img class="mb-1" src="images/icons/star-fill.svg" alt="Star">';
-  let star = '<img class="mb-1" src="images/icons/star.svg" alt="Star">';
-  let message = '';
-  let roundedRating = Math.round(rating);
-
-  for(let x = 1; x <= maxStars; x++){
-    if(x <= roundedRating){
-      message += starFill;
-
-    }else{
-      message += star;
-
-    }
-
-  }
-
-  return message;
-
-}
-
-function showToast(message, title){
-  toastr.options = {
-      "closeButton": true,
-      "debug": false,
-      "newestOnTop": false,
-      "progressBar": true,
-      "positionClass": "toast-top-center",
-      "preventDuplicates": false,
-      "onclick": null,
-      "showDuration": "300",
-      "hideDuration": "1000",
-      "timeOut": "5000",
-      "extendedTimeOut": "1000",
-      "showEasing": "swing",
-      "hideEasing": "linear",
-      "showMethod": "fadeIn",
-      "hideMethod": "fadeOut"
-  
-  };
-
-  toastr.success(message, title);
-
-}
-
-function loadingMessage(container){
+const loadingMessage = (container) => {
   let containerLoadingMessage = document.createElement('div');
-  let loadingMessage = 'Cargando los productos, por favor espere... ⌛';
-  containerLoadingMessage.className = 'loading-container d-flex align-items-center font-card-products';
-  containerLoadingMessage.innerHTML = loadingMessage;
-  containerLoadingMessage.style.textShadow = '2px 2px 5px rgba(0, 0, 0, 0.5)';
-  containerLoadingMessage.style.fontSize = '20px';
+  let elementMessage = document.createElement('p');
 
+  let loadingMessage = 'Cargando los productos...';
+  containerLoadingMessage.className = 'd-flex align-items-center justify-content-center mt-5';
+  
+  elementMessage.innerText = loadingMessage;
+  containerLoadingMessage.style.fontSize = '1rem';
+
+  containerLoadingMessage.appendChild(elementMessage);
+  
   container.appendChild(containerLoadingMessage);
 
-}
+  elementMessage.style.fontFamily = 'var(--font-main)';
 
-function categoriesList(){
+};
+
+const categoriesList = () => {
   let data = fetchData()
 
   return data
@@ -98,7 +38,7 @@ function categoriesList(){
 
 };
 
-function filterByCategory(nameCategory){
+const filterByCategory = (nameCategory) => {
   let allProducts = fetchData();
   let containerProducts = document.getElementById('products-list');
   containerProducts.innerHTML = '';
@@ -118,18 +58,16 @@ function filterByCategory(nameCategory){
 
         let imageProduct = document.createElement('img');
         imageProduct.src = product.image;
-        imageProduct.className = 'card-img-top mx-auto d-block';
-        imageProduct.style.width = '200px';
-        imageProduct.style.height = '200px';
+        imageProduct.className = 'card-img-top mx-auto d-block img-fluid';
+        imageProduct.style.maxWidth = '12rem';
         imageProduct.style.marginTop = '20px';
         imageProduct.style.marginBottom = '20px';
-        imageProduct.alt = product.title;
+        imageProduct.title = product.title;
 
         let cardBody = document.createElement('div');
         cardBody.className = 'card-body text-center';
 
         let cardTitle = document.createElement('h5');
-        cardTitle.className = 'card-title font-card-products';
         cardTitle.style.fontSize = '17px';
         cardTitle.style.lineHeight = '30px';
 
@@ -139,14 +77,12 @@ function filterByCategory(nameCategory){
         let cardText = document.createElement('p');
         let price = `<b>€${product.price}</b>`;
         cardText.innerHTML = price;
-        cardText.style.fontFamily = 'var(--font-products)';
         cardText.style.fontSize = '17px';
         cardText.className = 'card-text';
 
         let cardButton = document.createElement('button');
-        cardButton.className = 'btn btn-warning mb-5 font-buttons';
-        cardButton.style.color = 'black';
-        cardButton.innerHTML = 'Añadir al carrito';
+        cardButton.className = 'btn button-products';
+        cardButton.innerHTML = 'Añadir a la cesta';
 
         cardButton.addEventListener('click', () => {
           addProductToLocalstorage(product.id);
@@ -154,15 +90,14 @@ function filterByCategory(nameCategory){
         });
 
         let buttonViewDetail = document.createElement('button');
-        buttonViewDetail.className = 'btn btn-secondary ml-1 mb-5 font-buttons';
-        buttonViewDetail.style.color = 'black';
+        buttonViewDetail.className = 'btn button-products';
         
           buttonViewDetail.addEventListener('click', () => {
             productDetail(product.id);
 
           });
 
-          buttonViewDetail.innerHTML = 'Más detalles';
+        buttonViewDetail.innerHTML = 'Más detalles';
 
         cardBody.appendChild(cardTitle);
         cardBody.appendChild(cardText);
@@ -192,127 +127,128 @@ function filterByCategory(nameCategory){
       
       });
 
-      containerProducts.scrollIntoView({
+      /* containerProducts.scrollIntoView({
         behavior: 'smooth'
       
-      });
+      }); */
 
     });    
 
 }
 
-function returnAllTheProducts(){
-  allProducts = fetchData();
+const viewProducts = () => {
+  const allProducts = fetchData();
   let containerProducts = document.getElementById('products-list');
   containerProducts.innerHTML = '';
 
-  return allProducts
-    .then(products => {
+  return allProducts.then(products => {
 
-      loadingMessage(containerProducts);
+    loadingMessage(containerProducts);
       
-      setTimeout(() => {
-        let cards = [];
-        containerProducts.innerHTML = '';
+    setTimeout(() => {
+      let cards = [];
+      containerProducts.innerHTML = '';
         
-        products.forEach(product => {
-          let colDiv = document.createElement('div');
-          colDiv.className = 'col-lg-6 mb-4';
+      products.forEach(product => {
 
-          let cardDiv = document.createElement('div');
-          cardDiv.className = 'card';
-          cardDiv.style.boxShadow = '15px 15px 15px 10px rgba(0, 0, 0, 0.3)';
+        let colDiv = document.createElement('div');
+        colDiv.className = 'col-12 col-md-6 col-lg-6 mb-4 d-flex';
 
-          let imageProduct = document.createElement('img');
-          imageProduct.src = product.image;
-          imageProduct.className = 'card-img-top mx-auto d-block';
-          imageProduct.style.width = '200px';
-          imageProduct.style.height = '200px';
-          imageProduct.style.marginTop = '20px';
-          imageProduct.style.marginBottom = '20px';
-          imageProduct.alt = product.title;
+        let cardDiv = document.createElement('div');
+        cardDiv.className = 'card rounded-0 border-1 border-black w-100 d-flex flex-column';
 
-          let cardBody = document.createElement('div');
-          cardBody.className = 'card-body text-center';
+        let imageContainer = document.createElement('div');
+        imageContainer.className = 'd-flex justify-content-center align-items-center';
+        imageContainer.style.height = '200px';
+        imageContainer.style.padding = '10px';
 
-          let cardTitle = document.createElement('h5');
-          cardTitle.className = 'card-title font-card-products';
-          cardTitle.style.fontSize = '17px';
-          cardTitle.style.lineHeight = '30px';
+        let imageProduct = document.createElement('img');
+        imageProduct.src = product.image;
+        imageProduct.className = 'img-fluid';
+        imageProduct.style.maxHeight = '100%';
+        imageProduct.style.maxWidth = '100%';
+        imageProduct.style.objectFit = 'contain';
+        imageProduct.alt = product.title;
 
-          let productTitle = `<b>${product.title}</b>`
-          cardTitle.innerHTML = productTitle;
+        imageContainer.appendChild(imageProduct);
 
-          let cardText = document.createElement('p');
-          let price = `<b>€${product.price}</b>`;
-          cardText.innerHTML = price;
-          cardText.style.fontFamily = 'var(--font-products)';
-          cardText.style.fontSize = '17px';
-          cardText.className = 'card-text';
+        let cardBody = document.createElement('div');
+        cardBody.className = 'card-body text-center d-flex flex-column';
 
-          let buttonBuyProduct = document.createElement('button');
-          buttonBuyProduct.className = 'btn btn-warning mb-5 font-buttons';
-          buttonBuyProduct.style.color = 'black';
-          
-          buttonBuyProduct.addEventListener('click', () => {
-            addProductToLocalstorage(product.id);
+        let cardTitle = document.createElement('h5');
+        cardTitle.style.fontSize = '17px';
+        cardTitle.style.lineHeight = '1.4';
+        cardTitle.style.wordBreak = 'break-word';
+        cardTitle.innerHTML = `<b>${product.title}</b>`;
 
-          });
+        let cardText = document.createElement('p');
+        cardText.innerHTML = `<b>€${product.price}</b>`;
+        cardText.style.fontSize = '17px';
+        cardText.className = 'card-text';
 
-          buttonBuyProduct.innerHTML = 'Añadir al carrito';
+        let buttonsContainer = document.createElement('div');
+        buttonsContainer.className = 'mt-auto';
 
-          let buttonViewDetail = document.createElement('button');
-          buttonViewDetail.className = 'btn btn-secondary ml-1 mb-5 font-buttons';
-          buttonViewDetail.style.color = 'black';
-          
-          buttonViewDetail.addEventListener('click', () => {
-            productDetail(product.id);
+        let buttonBuyProduct = document.createElement('button');
+        buttonBuyProduct.className = 'btn button-products w-100 mb-2';
+        buttonBuyProduct.innerText = 'Añadir a la cesta';
+        buttonBuyProduct.addEventListener('click', () => {
+          addProductToLocalstorage(product.id);
+        
+        });
 
-          });
+        let buttonViewDetail = document.createElement('button');
+        buttonViewDetail.className = 'btn button-products w-100';
+        buttonViewDetail.innerText = 'Más detalles';
+        buttonViewDetail.addEventListener('click', () => {
+          productDetail(product.id);
+        
+        });
 
-          buttonViewDetail.innerHTML = 'Más detalles';
+        buttonsContainer.appendChild(buttonBuyProduct);
+        buttonsContainer.appendChild(buttonViewDetail);
 
-          cardBody.appendChild(cardTitle);
-          cardBody.appendChild(cardText);
-          cardBody.appendChild(buttonBuyProduct);
-          cardBody.appendChild(buttonViewDetail);
-          cardDiv.appendChild(imageProduct);
-          cardDiv.appendChild(cardBody);
-          colDiv.appendChild(cardDiv);
+        cardBody.appendChild(cardTitle);
+        cardBody.appendChild(cardText);
+        cardBody.appendChild(buttonsContainer);
 
-          containerProducts.appendChild(colDiv);
-            
-          cards.push(cardDiv);
+        cardDiv.appendChild(imageContainer);
+        cardDiv.appendChild(cardBody);
+        colDiv.appendChild(cardDiv);
+        containerProducts.appendChild(colDiv);
 
-        }); 
-
-        let maxHeight = 0;
-        cards.forEach(card => {
-          let cardHeight = card.offsetHeight;
-          if(cardHeight > maxHeight){
-            maxHeight = cardHeight;
-          
-          }
+        cards.push(cardDiv);
       
+      });
+
+      if (window.innerWidth >= 992) {
+        let maxHeight = 0;
+
+        cards.forEach(card => {
+          card.style.height = 'auto';
+          let h = card.offsetHeight;
+          if (h > maxHeight) maxHeight = h;
         });
 
         cards.forEach(card => {
           card.style.height = maxHeight + 'px';
+        });
+      
+      } else {
+        cards.forEach(card => {
+          card.style.minHeight = 'auto';
         
         });
+      
+      };
 
-        containerProducts.scrollIntoView({
-          behavior: 'smooth'
-        
-        });
+    }, 1000);
+  
+  });
 
-      }, 1000);
-         
-    });
+};
 
-}
-
-async function productDetail(idProduct){
+const productDetail = async(idProduct) => {
   try{
     let dataProducts = await fetchData();
     let findProduct = dataProducts.find(product => product.id === idProduct);
@@ -332,15 +268,18 @@ async function productDetail(idProduct){
     
     arrayProduct.forEach(attr => {
       modalBodyContent += `
-        <h5 class="titles"><b>${attr.title}</b></h5>
-        <br>
-        <b class="titles">Precio: €${attr.price}</b>
-        <br>
-        <br>
-        <b class="titles element-rating">Valoración: ${attr.rating.rate} ${renderRatingStars(attr.rating.rate)} (${attr.rating.count}) </b>
-        <br>
-        <br>
-        <b class="titles">Descripción:</b> ${attr.description}
+        <h5><b>${attr.title}</b></h5>
+        <div class="mt-3 font-text">
+          <div class="mb-3">
+            <b>Precio:</b> <span>€${attr.price}</span>
+          </div>
+          <div class="mb-3">
+            <b>Valoración:</b> <span>${attr.rating.rate} ${renderRatingStars(attr.rating.rate)} (${attr.rating.count})</span>
+          </div>
+          <div class="mb-3">
+            <b>Descripción:</b> <span>${attr.description}</span>
+          </div>
+        </div>
 
       `
 
@@ -353,13 +292,11 @@ async function productDetail(idProduct){
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title">Detalle del Producto</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           ${modalBodyContent}
           <div class="modal-footer">
-            <button type="button" class="btn btn-warning font-buttons" data-dismiss="modal">Cerrar</button>
+            <button type="button" class="btn border-1 border-black rounded-0 button-products" data-bs-dismiss="modal">Cerrar</button>
           </div>
         </div>
       </div>
@@ -369,14 +306,14 @@ async function productDetail(idProduct){
 
     $(`#modal-product-${idProduct}`).modal('show'); // Se llama al modal con ID asigando anteriormente.
 
-  }catch{
-    throw new Error(console.error('Error.'));
+  } catch(error) {
+    console.error(error);
 
   }
 
 };
 
-async function addProductToLocalstorage(productId){
+const addProductToLocalstorage = async(productId) => {
   try{
     let productsAPI = await fetchData();
     let productsInLocalStorage = getDataFromLocalStorage();
@@ -386,185 +323,195 @@ async function addProductToLocalstorage(productId){
     saveDataInLocalStorage(productsInLocalStorage);
     
     setTimeout(() => {
-      showToast('¡El producto fue agregado exitosamente al carrito!', 'Producto agregado con éxito');
+      showToast('success', '¡Producto agregado correctamente!', 'Agregaste correctamente el producto a la cesta.', mainContainer);
       
     }, 500);
 
     await counterProductsInCart();
 
-  }catch(error){
+  } catch(error) {
     console.error(error.message);
 
   }
 
 }
 
-function counterProductsInCart(){
+const counterProductsInCart = () => {
   let productsInLocalStorage = getDataFromLocalStorage();
-  let cartSection = document.getElementById('nav-cart');
+  let cartSection = document.getElementById('navCart');
   let countProducts = productsInLocalStorage.length;
   let counterElement = document.getElementById('cart-counter');
   
   if(!counterElement){
     counterElement = document.createElement('p');
     counterElement.style.listStyle = 'none';
-    counterElement.style.fontSize = '11px'
-    counterElement.style.color = 'white'; 
-    counterElement.className = 'counter-products ml-0 mt-3';
+    counterElement.style.fontSize = '0.8rem'
+    counterElement.className = 'counter-products me-0 mt-3';
     counterElement.id = 'cart-counter';
     cartSection.appendChild(counterElement);
 
   }
 
-  counterElement.innerHTML = `<b>${countProducts}</b>`;
+  counterElement.innerText = `${countProducts}`;
 
 }
 
-function myCart(event) {
-  if(event){
-    event.preventDefault();
-  
-  }
-  
+const myCart = (event) => {
+  event?.preventDefault();
+
   let productsInLocalStorage = getDataFromLocalStorage();
-  
-  try{
-    if(productsInLocalStorage){
-      function deleteDuplicate(array){
+
+  try {
+    if (productsInLocalStorage) {
+
+      const deleteDuplicate = (array) => {
         let uniqueProducts = {};
+        
         array.forEach(element => {
-          uniqueProducts[element.title] = element; // Esto nos garantiza que no se puedan agregar objetos con el mismo título.
+          uniqueProducts[element.title] = element;
         
         });
-      
+        
         return Object.values(uniqueProducts);
       
-      }
-  
-      function countDuplicate(array){
+      };
+
+      const countDuplicate = (array) => {
         let countMap = {};
-        
         array.forEach(element => {
-          if(countMap[element.title]){
-            countMap[element.title]++;
-          
-          }else{
-            countMap[element.title] = 1;
-          
-          }
-        
+          countMap[element.title] = (countMap[element.title] || 0) + 1;
         });
-  
         return countMap;
-  
-      }
-  
-      let modalBodyContent = '<div class="modal-body">';
+      
+      };
+
+      let modalBodyContent = '';
       let noneDuplicate = deleteDuplicate(productsInLocalStorage);
       let count = countDuplicate(productsInLocalStorage);
-  
-      if(productsInLocalStorage.length > 0){
+
+      if (productsInLocalStorage.length > 0) {
+
         noneDuplicate.forEach(attr => {
           let productCount = count[attr.title];
           let totalPrice = attr.price * productCount;
 
           modalBodyContent += `
-            <div class="d-flex align-items-start mb-4">
-              <img class="image-product-to-cart" src="${attr.image}" style="margin-right: 20px;">
-              <div>
-                <h5 class="titles"><b>${attr.title}</b></h5>
-                <p class="titles"><b>Precio: €${attr.price} | Cantidad: ${productCount} | Total: €${totalPrice.toFixed(2)} |</b><a class="link-remove m-3" onclick="removeProductToCart(${attr.id})"><img class="mr-1 mb-1" src="/images/icons/trash3-fill.svg">Remover</a></p>
+            <div class="d-flex justify-content-start mb-4">
+              <div class="d-flex align-items-center">
+                <div class="border border-1 border-dark p-3">
+                  <img class="img-cart" src="${attr.image}">
+                </div>
+                <div class="border border-1 border-dark text-start p-2">
+                  <h5 class="mb-1">
+                    <b>${attr.title}</b>
+                  </h5>
+                  <p class="mb-0">
+                    <b>
+                      Precio: €${attr.price} | Cantidad: ${productCount} | Total: €${totalPrice.toFixed(2)}
+                    </b>
+                    <a href="#" class="ms-3 remove-product" data-id="${attr.id}">
+                      <i class="bi bi-trash2"></i>
+                      Remover
+                    </a>
+                  </p>
+                </div>
               </div>
             </div>
-            <hr class="horizontal-line my-2">
           `;
+        });
 
-        });      
-        
-        
-      }else if(productsInLocalStorage.length === 0){
-        let message = `
-          <div class="d-flex align-items-center justify-content-center">
-            <img class="empty-cart" src="images/pngwing.com.png">
+      } else {
+        modalBodyContent = `
+          <div class="d-flex flex-column flex-md-row align-items-center justify-content-center">
+            <img class="empty-cart" src="images/assets/empty-cart.png">
+            <h4 class="text-center">¡Oh, mi cesta está vacía!</h4>
           </div>
-          <h4 class="justify-content-center text-center title-empty-cart">¡Tu carrito de compras está vacío!</h4>
-
-        `
-        modalBodyContent += message;
-        
+        `;
+      
       };
-      
-      modalBodyContent += '</div>';
-      
+
       let modalCart = document.getElementById('modal-cart');
-      
-      if(!modalCart){ 
+
+      if (!modalCart) {
         modalCart = document.createElement('div');
-        let bagCheckImg = '/images/icons/bag-dash-fill.svg';
         modalCart.className = 'modal fade';
         modalCart.id = 'modal-cart';
         modalCart.tabIndex = -1;
-        
+
         modalCart.innerHTML = `
-          <div class="modal-dialog custom-modal-cart">
-            <div class="modal-content">
-              <div class="modal-header align-items-center text-center">
-                <h5 class="modal-title titles">
-                  <img src="${bagCheckImg}" class="ml-3 mr-3 img-cart">Mi carrito
-                </h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
+          <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content rounded-0">
+              <div class="modal-header text-center">
+                <h5 class="modal-title titles">Mi cesta de compras</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
               </div>
-              ${modalBodyContent}
+              <div class="modal-body"></div>
               <div class="modal-footer">
-                <button type="button" id='close-mycart' class="btn btn-warning font-buttons" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn border-1 border-black rounded-0 button-products" data-bs-dismiss="modal">
+                  Cerrar
+                </button>
               </div>
             </div>
           </div>
         `;
+
         document.body.appendChild(modalCart);
       
-      }else{
-        modalCart.querySelector('.modal-body').innerHTML = modalBodyContent;
-      
-      }
+      };
+
+      modalCart.querySelector('.modal-body').innerHTML = modalBodyContent;
+
+      const linkRemove = modalCart.querySelectorAll('.remove-product');
+
+      linkRemove.forEach(link => {
+        link.addEventListener('click', (event) => {
+          event.preventDefault();
+
+          const productId = Number(link.dataset.id);
           
-      $(`#modal-cart`).modal('show'); // Se llama al modal con ID asignado anteriormente.  
+          removeProductFromCart(productId);
+        
+        });
+      
+      });
 
-    }  
+      $(`#modal-cart`).modal('show');
     
-  }catch(error){
-    console.error(error);
+    };
+
+  } catch(error) {
+    console.error(error.message);
   
-  }
+  };
 
-}
+};
 
-async function removeProductToCart(productID){
+
+const removeProductFromCart = async(productId) => {
   try{
     let productsInLocalStorage = getDataFromLocalStorage();
-    let productIndex = productsInLocalStorage.findIndex(product => product.id === productID);
-    productsInLocalStorage.splice(productIndex, 1);
-    
+    let deleteProduct = productsInLocalStorage.findIndex(product => product.id === productId);
+
+    productsInLocalStorage.splice(deleteProduct, 1);
+
     saveDataInLocalStorage(productsInLocalStorage);
-  
-    showToast('Producto eliminado con éxito');
   
     await myCart();
     await counterProductsInCart();
     
-  }catch(error){
-    console.error(error);
+  } catch(error) {
+    console.error(error.message);
 
-  }
+  };
 
-}
+};
 
-function main(){
-  returnAllTheProducts();
+const main = () => {
+  navCart.addEventListener('click', myCart);
+  
+  viewProducts ();
   counterProductsInCart();
 
-}
+};
 
 main();
