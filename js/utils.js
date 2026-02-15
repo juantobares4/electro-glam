@@ -62,11 +62,22 @@ export const renderRatingStars = (rating) => {
 
 };
 
+const changeFormat = (minutes) => {
+  const parseMinutes = minutes.toString();
+
+  const newFormat = parseMinutes.length < 2 ? '0' + minutes : minutes;
+
+  return newFormat;
+
+};
+
 export const whatTime = () => {
   const objectDate = new Date();
-  const currentHour = `${objectDate.getHours()}:${objectDate.getMinutes()}`;
+  const getMinutes = objectDate.getMinutes();
 
-  return currentHour;
+  const newFormatMinutes = changeFormat(getMinutes);
+
+  return `${objectDate.getHours()}:${newFormatMinutes}`;
 
 };
 
@@ -78,7 +89,7 @@ export const showToast = (type, title, msg, container) => {
     toastWrapper = document.createElement('div');
     toastWrapper.id = 'toast-wrapper';
     toastWrapper.className = 'toast-container position-fixed bottom-0 end-0 p-3';
-    toastWrapper.style.zIndex = 1055;
+    toastWrapper.style.zIndex = 1090;
     mainContainer.appendChild(toastWrapper);
   
   };

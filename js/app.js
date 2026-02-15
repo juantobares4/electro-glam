@@ -85,7 +85,7 @@ const filterByCategory = (nameCategory) => {
         cardButton.innerHTML = 'Añadir a la cesta';
 
         cardButton.addEventListener('click', () => {
-          addProductToLocalstorage(product.id);
+          addProductToCart(product.id);
 
         });
 
@@ -193,7 +193,7 @@ const viewProducts = () => {
         buttonBuyProduct.className = 'btn button-products w-100 mb-2';
         buttonBuyProduct.innerText = 'Añadir a la cesta';
         buttonBuyProduct.addEventListener('click', () => {
-          addProductToLocalstorage(product.id);
+          addProductToCart(product.id);
         
         });
 
@@ -283,7 +283,7 @@ const productDetail = async(idProduct) => {
 
       `
 
-    })
+    });
 
     modalBodyContent += '</div>';
 
@@ -300,6 +300,7 @@ const productDetail = async(idProduct) => {
           </div>
         </div>
       </div>
+    
     `;
 
     document.body.appendChild(modalProduct);
@@ -313,10 +314,11 @@ const productDetail = async(idProduct) => {
 
 };
 
-const addProductToLocalstorage = async(productId) => {
+const addProductToCart = async(productId) => {
   try{
-    let productsAPI = await fetchData();
     let productsInLocalStorage = getDataFromLocalStorage();
+    
+    let productsAPI = await fetchData();
     let addedProduct = productsAPI.find(product => product.id === productId);
     
     productsInLocalStorage.push(addedProduct);
@@ -328,13 +330,14 @@ const addProductToLocalstorage = async(productId) => {
     }, 500);
 
     await counterProductsInCart();
+    await totalPriceCart();
 
   } catch(error) {
     console.error(error.message);
 
-  }
+  };
 
-}
+};
 
 const counterProductsInCart = () => {
   let productsInLocalStorage = getDataFromLocalStorage();
@@ -354,7 +357,16 @@ const counterProductsInCart = () => {
 
   counterElement.innerText = `${countProducts}`;
 
-}
+};
+
+const totalPriceCart = () => {
+  const totalProductsInCart = getDataFromLocalStorage();
+
+  const totalPrice = totalProductsInCart.map(product => product.price).reduce((accum, num) => accum + num, 0).toFixed(2);
+  
+  return totalPrice;
+
+};
 
 const myCart = (event) => {
   event?.preventDefault();
@@ -378,9 +390,12 @@ const myCart = (event) => {
 
       const countDuplicate = (array) => {
         let countMap = {};
+
         array.forEach(element => {
           countMap[element.title] = (countMap[element.title] || 0) + 1;
+        
         });
+        
         return countMap;
       
       };
@@ -396,28 +411,27 @@ const myCart = (event) => {
           let totalPrice = attr.price * productCount;
 
           modalBodyContent += `
-            <div class="d-flex justify-content-start mb-4">
+            <div class="d-flex justify-content-start mb-4 border-bottom pb-4">
               <div class="d-flex align-items-center">
                 <div class="border border-1 border-dark p-3">
                   <img class="img-cart" src="${attr.image}">
                 </div>
-                <div class="border border-1 border-dark text-start p-2">
+                <div class="text-start p-2">
                   <h5 class="mb-1">
-                    <b>${attr.title}</b>
+                    ${attr.title}
                   </h5>
-                  <p class="mb-0">
-                    <b>
+                  <p class="mb-0 text-black bg-secondary-subtle py-1">
                       Precio: €${attr.price} | Cantidad: ${productCount} | Total: €${totalPrice.toFixed(2)}
-                    </b>
-                    <a href="#" class="ms-3 remove-product" data-id="${attr.id}">
-                      <i class="bi bi-trash2"></i>
-                      Remover
+                    <a title="Eliminar producto de la cesta" href="#" class="ms-3 remove-product text-black" data-id="${attr.id}">
+                      <i class="bi bi-trash"></i>
                     </a>
-                  </p>
+                    </p>
                 </div>
               </div>
             </div>
+          
           `;
+        
         });
 
       } else {
@@ -447,6 +461,7 @@ const myCart = (event) => {
               </div>
               <div class="modal-body"></div>
               <div class="modal-footer">
+                <h6 class="me-2" id="totalCart">Total: €${totalPriceCart()}</h6>
                 <button type="button" class="btn border-1 border-black rounded-0 button-products" data-bs-dismiss="modal">
                   Cerrar
                 </button>
@@ -479,6 +494,8 @@ const myCart = (event) => {
     
     };
 
+    totalPriceCart();
+
   } catch(error) {
     console.error(error.message);
   
@@ -498,6 +515,8 @@ const removeProductFromCart = async(productId) => {
   
     await myCart();
     await counterProductsInCart();
+    await showToast('success', '¡Producto eliminado correctamente!', 'Eliminaste correctamente el producto de la cesta.', mainContainer);
+    await totalPriceCart();
     
   } catch(error) {
     console.error(error.message);
