@@ -127,3 +127,15 @@ export const showToast = (type, title, msg, container) => {
   });
 
 };
+
+export const totalPriceCart = () => {
+  const totalProductsInCart = getDataFromLocalStorage();
+
+  const total = totalProductsInCart.reduce((accum, product) => {
+    return accum + product.price;
+  
+  }, 0);
+  
+  return total.toFixed(2);
+
+};

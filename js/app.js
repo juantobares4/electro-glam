@@ -1,5 +1,5 @@
 import { fetchData } from "./fetch.js";
-import { getDataFromLocalStorage, saveDataInLocalStorage, renderRatingStars, showToast } from "./utils.js";
+import { getDataFromLocalStorage, saveDataInLocalStorage, renderRatingStars, showToast, totalPriceCart } from "./utils.js";
 
 const navCart = document.getElementById('navCart');
 const mainContainer = document.getElementById('products-list');
@@ -22,124 +22,26 @@ const loadingMessage = (container) => {
 
 };
 
-const categoriesList = () => {
-  let data = fetchData()
+const categoriesList = async() => {
+  try{
+    let data = await fetchData();
+    let arrayCategories = data.map(product => product.category);
+    let dataArray = new Set(arrayCategories); // Set es una estructura de datos que no puede almacenar valores duplicados.
+    let result = [...dataArray];
 
-  return data
-    .then(products => {
-      let arrayCategories = products.map(product => product.category);
-      let dataArray = new Set(arrayCategories); // Set es una estructura de datos que no puede almacenar valores duplicados.
-      let result = [...dataArray];
+    return result;
 
-      return result;
+  } catch(error) {
+    console.error(error);
 
-  })
-
+  };
 
 };
-
-const filterByCategory = (nameCategory) => {
-  let allProducts = fetchData();
-  let containerProducts = document.getElementById('products-list');
-  containerProducts.innerHTML = '';
-
-  return allProducts
-    .then(products => {
-      let byCategory = products.filter(product => product.category === nameCategory);
-      let cards = [];
-        
-      byCategory.forEach(product => {
-        let colDiv = document.createElement('div');
-        colDiv.className = 'col-lg-6 mb-4';
-
-        let cardDiv = document.createElement('div');
-        cardDiv.className = 'card';
-        cardDiv.style.boxShadow = '15px 15px 15px 10px rgba(0, 0, 0, 0.3)';
-
-        let imageProduct = document.createElement('img');
-        imageProduct.src = product.image;
-        imageProduct.className = 'card-img-top mx-auto d-block img-fluid';
-        imageProduct.style.maxWidth = '12rem';
-        imageProduct.style.marginTop = '20px';
-        imageProduct.style.marginBottom = '20px';
-        imageProduct.title = product.title;
-
-        let cardBody = document.createElement('div');
-        cardBody.className = 'card-body text-center';
-
-        let cardTitle = document.createElement('h5');
-        cardTitle.style.fontSize = '17px';
-        cardTitle.style.lineHeight = '30px';
-
-        let productTitle = `<b>${product.title}</b>`
-        cardTitle.innerHTML = productTitle;
-
-        let cardText = document.createElement('p');
-        let price = `<b>€${product.price}</b>`;
-        cardText.innerHTML = price;
-        cardText.style.fontSize = '17px';
-        cardText.className = 'card-text';
-
-        let cardButton = document.createElement('button');
-        cardButton.className = 'btn button-products';
-        cardButton.innerHTML = 'Añadir a la cesta';
-
-        cardButton.addEventListener('click', () => {
-          addProductToCart(product.id);
-
-        });
-
-        let buttonViewDetail = document.createElement('button');
-        buttonViewDetail.className = 'btn button-products';
-        
-          buttonViewDetail.addEventListener('click', () => {
-            productDetail(product.id);
-
-          });
-
-        buttonViewDetail.innerHTML = 'Más detalles';
-
-        cardBody.appendChild(cardTitle);
-        cardBody.appendChild(cardText);
-        cardBody.appendChild(cardButton);
-        cardBody.appendChild(buttonViewDetail);
-        cardDiv.appendChild(imageProduct);
-        cardDiv.appendChild(cardBody);
-        colDiv.appendChild(cardDiv);
-
-        containerProducts.appendChild(colDiv);
-          
-        cards.push(cardDiv);
-
-      }); 
-
-      let maxHeight = 0;
-      cards.forEach(card => {
-            let cardHeight = card.offsetHeight;
-            if (cardHeight > maxHeight) {
-                maxHeight = cardHeight;
-            }
-      
-      });
-
-      cards.forEach(card => {
-            card.style.height = maxHeight + 'px';
-      
-      });
-
-      /* containerProducts.scrollIntoView({
-        behavior: 'smooth'
-      
-      }); */
-
-    });    
-
-}
 
 const viewProducts = () => {
   const allProducts = fetchData();
   let containerProducts = document.getElementById('products-list');
-  containerProducts.innerHTML = '';
+  containerProducts.textContent = '';
 
   return allProducts.then(products => {
 
@@ -330,7 +232,7 @@ const addProductToCart = async(productId) => {
     }, 500);
 
     await counterProductsInCart();
-    await totalPriceCart();
+    await renderTotalPrice();
 
   } catch(error) {
     console.error(error.message);
@@ -353,18 +255,16 @@ const counterProductsInCart = () => {
     counterElement.id = 'cart-counter';
     cartSection.appendChild(counterElement);
 
-  }
+  };
 
   counterElement.innerText = `${countProducts}`;
 
 };
 
-const totalPriceCart = () => {
-  const totalProductsInCart = getDataFromLocalStorage();
-
-  const totalPrice = totalProductsInCart.map(product => product.price).reduce((accum, num) => accum + num, 0).toFixed(2);
+const renderTotalPrice = () => {
+  const totalElement = document.getElementById('totalCart');
   
-  return totalPrice;
+  totalElement.textContent = `€${totalPriceCart()}`;
 
 };
 
@@ -461,7 +361,7 @@ const myCart = (event) => {
               </div>
               <div class="modal-body"></div>
               <div class="modal-footer">
-                <h6 class="me-2" id="totalCart">Total: €${totalPriceCart()}</h6>
+                <h6 class="me-2" id="totalCart"></h6>
                 <button type="button" class="btn border-1 border-black rounded-0 button-products" data-bs-dismiss="modal">
                   Cerrar
                 </button>
@@ -494,7 +394,7 @@ const myCart = (event) => {
     
     };
 
-    totalPriceCart();
+    renderTotalPrice();
 
   } catch(error) {
     console.error(error.message);
@@ -516,7 +416,7 @@ const removeProductFromCart = async(productId) => {
     await myCart();
     await counterProductsInCart();
     await showToast('success', '¡Producto eliminado correctamente!', 'Eliminaste correctamente el producto de la cesta.', mainContainer);
-    await totalPriceCart();
+    renderTotalPrice();
     
   } catch(error) {
     console.error(error.message);
@@ -528,7 +428,7 @@ const removeProductFromCart = async(productId) => {
 const main = () => {
   navCart.addEventListener('click', myCart);
   
-  viewProducts ();
+  viewProducts();
   counterProductsInCart();
 
 };
