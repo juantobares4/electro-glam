@@ -106,7 +106,7 @@ export const showToast = (type, title, msg, container) => {
     <div class="toast-header titles-font">
       ${iconElement}
       <strong class="me-auto text-${type === 'success' ? 'success' : 'danger'}" style="font-size: 14px">${title}</strong>
-      <small class="text-muted ms-2">${whatTime()}hs</small>
+      <small class="fw-600 ms-2">${whatTime()}hs</small>
       <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
     </div>
     <div class="toast-body text-center paragraph-font" style="font-size: 13px">

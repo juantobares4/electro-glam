@@ -3,6 +3,7 @@ import { getDataFromLocalStorage, saveDataInLocalStorage, renderRatingStars, sho
 
 const navCart = document.getElementById('navCart');
 const mainContainer = document.getElementById('products-list');
+const categoriesContainer = document.getElementById('categoriesContainer');
 
 const loadingMessage = (container) => {
   let containerLoadingMessage = document.createElement('div');
@@ -24,12 +25,35 @@ const loadingMessage = (container) => {
 
 const categoriesList = async() => {
   try{
-    let data = await fetchData();
-    let arrayCategories = data.map(product => product.category);
-    let dataArray = new Set(arrayCategories); // Set es una estructura de datos que no puede almacenar valores duplicados.
-    let result = [...dataArray];
+    let products = await fetchData();
+    let productsCategories = products.map(product => product.category);
+    let newArray = new Set(productsCategories); // Set es una estructura de datos que no puede almacenar valores duplicados.
+    let allCategories = [...newArray];
 
-    return result;
+    return allCategories;
+
+  } catch(error) {
+    console.error(error);
+
+  };
+
+};
+
+const renderCategories = async(container) => {
+  try{
+    const allCategories = await categoriesList();
+    
+    return allCategories.forEach(category => {
+      const li = document.createElement('li');
+      const categoryElement = `
+        <a class="dropdown-item" href="#" data-id=${category}>${category}</a>
+      `;
+
+      li.innerHTML = categoryElement;
+
+      container.appendChild(li);
+
+    });
 
   } catch(error) {
     console.error(error);
@@ -83,6 +107,12 @@ const viewProducts = () => {
         cardTitle.style.wordBreak = 'break-word';
         cardTitle.innerHTML = `<b>${product.title}</b>`;
 
+        let productCategory = document.createElement('small');
+        productCategory.style.lineHeight = '1.4';
+        productCategory.style.wordBreak = 'break-word';
+        productCategory.style.marginBlock = '10px';
+        productCategory.innerHTML = `<b>${product.category}</b>`;
+
         let cardText = document.createElement('p');
         cardText.innerHTML = `<b>€${product.price}</b>`;
         cardText.style.fontSize = '17px';
@@ -111,6 +141,7 @@ const viewProducts = () => {
         buttonsContainer.appendChild(buttonViewDetail);
 
         cardBody.appendChild(cardTitle);
+        cardBody.appendChild(productCategory);
         cardBody.appendChild(cardText);
         cardBody.appendChild(buttonsContainer);
 
@@ -232,7 +263,7 @@ const addProductToCart = async(productId) => {
     }, 500);
 
     await counterProductsInCart();
-    await renderTotalPrice();
+    renderTotalPrice();
 
   } catch(error) {
     console.error(error.message);
@@ -264,6 +295,8 @@ const counterProductsInCart = () => {
 const renderTotalPrice = () => {
   const totalElement = document.getElementById('totalCart');
   
+  if (!totalElement) return;
+
   totalElement.textContent = `€${totalPriceCart()}`;
 
 };
@@ -429,6 +462,7 @@ const main = () => {
   navCart.addEventListener('click', myCart);
   
   viewProducts();
+  renderCategories(categoriesContainer);
   counterProductsInCart();
 
 };

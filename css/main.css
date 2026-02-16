@@ -40,3 +40,5 @@ a {
   text-decoration: none;
 
 }
+
+small { font-family: var(--font-main); font-weight: 200; }
