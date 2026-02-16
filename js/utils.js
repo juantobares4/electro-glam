@@ -1,3 +1,5 @@
+import { fetchData } from "./fetch.js";
+
 export const getDataFromLocalStorage = () => {
   let data = localStorage.getItem('data');
 
@@ -139,3 +141,15 @@ export const totalPriceCart = () => {
   return total.toFixed(2);
 
 };
+
+export const renderProductsWithFilters = async(categoryName) => {
+  const products = await fetchData();
+  
+  const renderProducts = 
+  categoryName ?
+   products.filter(product => product.category === categoryName) 
+   : products;
+
+  return renderProducts;
+
+}; 

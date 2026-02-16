@@ -1,5 +1,5 @@
 import { fetchData } from "./fetch.js";
-import { getDataFromLocalStorage, saveDataInLocalStorage, renderRatingStars, showToast, totalPriceCart } from "./utils.js";
+import { renderProductsWithFilters, getDataFromLocalStorage, saveDataInLocalStorage, renderRatingStars, showToast, totalPriceCart } from "./utils.js";
 
 const navCart = document.getElementById('navCart');
 const mainContainer = document.getElementById('products-list');
@@ -39,7 +39,7 @@ const categoriesList = async() => {
 
 };
 
-const renderCategories = async(container) => {
+const renderCategoriesOnMenu = async(container) => {
   try{
     const allCategories = await categoriesList();
     
@@ -48,7 +48,7 @@ const renderCategories = async(container) => {
       const a = document.createElement('a');
  
       const categoryElement = `
-        <a id="categoryAnchor-${index}" class="dropdown-item" href="#" data-id=${category}>${category}</a>
+        <a id="categoryAnchor-${index}" class="dropdown-item" href="#" data-id="${category}">${category}</a>
       `;
 
       a.innerHTML = categoryElement;
@@ -60,7 +60,7 @@ const renderCategories = async(container) => {
 
       if (categoryAnchor) {
         categoryAnchor.addEventListener('click', () => {
-          filterByCategory(categoryAnchor.dataset.id);
+          viewProducts(categoryAnchor.dataset.id);
 
         });
 
@@ -75,37 +75,32 @@ const renderCategories = async(container) => {
 
 };
 
-const filterByCategory = (categoryName) => {
-  console.log(categoryName);
-
-};
-
-const viewProducts = () => {
-  const allProducts = fetchData();
-  let containerProducts = document.getElementById('products-list');
-  containerProducts.textContent = '';
-
-  return allProducts.then(products => {
-
+const viewProducts = async(filter) => {
+  try {
+    let containerProducts = document.getElementById('products-list');
+    containerProducts.textContent = '';
+    
+    const products = await renderProductsWithFilters(filter);
+  
     loadingMessage(containerProducts);
-      
-    setTimeout(() => {
+        
+    setTimeout(() => { 
       let cards = [];
       containerProducts.innerHTML = '';
         
       products.forEach(product => {
-
+  
         let colDiv = document.createElement('div');
         colDiv.className = 'col-12 col-md-6 col-lg-6 mb-4 d-flex';
-
+  
         let cardDiv = document.createElement('div');
         cardDiv.className = 'card rounded-0 border-1 border-black w-100 d-flex flex-column';
-
+  
         let imageContainer = document.createElement('div');
         imageContainer.className = 'd-flex justify-content-center align-items-center';
         imageContainer.style.height = '200px';
         imageContainer.style.padding = '10px';
-
+  
         let imageProduct = document.createElement('img');
         imageProduct.src = product.image;
         imageProduct.className = 'img-fluid';
@@ -113,32 +108,32 @@ const viewProducts = () => {
         imageProduct.style.maxWidth = '100%';
         imageProduct.style.objectFit = 'contain';
         imageProduct.alt = product.title;
-
+  
         imageContainer.appendChild(imageProduct);
-
+  
         let cardBody = document.createElement('div');
         cardBody.className = 'card-body text-center d-flex flex-column';
-
+  
         let cardTitle = document.createElement('h5');
         cardTitle.style.fontSize = '17px';
         cardTitle.style.lineHeight = '1.4';
         cardTitle.style.wordBreak = 'break-word';
         cardTitle.innerHTML = `<b>${product.title}</b>`;
-
+  
         let productCategory = document.createElement('small');
         productCategory.style.lineHeight = '1.4';
         productCategory.style.wordBreak = 'break-word';
         productCategory.style.marginBlock = '10px';
         productCategory.innerHTML = `<b>${product.category}</b>`;
-
+  
         let cardText = document.createElement('p');
         cardText.innerHTML = `<b>€${product.price}</b>`;
         cardText.style.fontSize = '17px';
         cardText.className = 'card-text';
-
+  
         let buttonsContainer = document.createElement('div');
         buttonsContainer.className = 'mt-auto';
-
+  
         let buttonBuyProduct = document.createElement('button');
         buttonBuyProduct.className = 'btn button-products w-100 mb-2';
         buttonBuyProduct.innerText = 'Añadir a la cesta';
@@ -146,7 +141,7 @@ const viewProducts = () => {
           addProductToCart(product.id);
         
         });
-
+  
         let buttonViewDetail = document.createElement('button');
         buttonViewDetail.className = 'btn button-products w-100';
         buttonViewDetail.innerText = 'Más detalles';
@@ -154,33 +149,33 @@ const viewProducts = () => {
           productDetail(product.id);
         
         });
-
+  
         buttonsContainer.appendChild(buttonBuyProduct);
         buttonsContainer.appendChild(buttonViewDetail);
-
+  
         cardBody.appendChild(cardTitle);
         cardBody.appendChild(productCategory);
         cardBody.appendChild(cardText);
         cardBody.appendChild(buttonsContainer);
-
+  
         cardDiv.appendChild(imageContainer);
         cardDiv.appendChild(cardBody);
         colDiv.appendChild(cardDiv);
         containerProducts.appendChild(colDiv);
-
+  
         cards.push(cardDiv);
       
       });
-
+  
       if (window.innerWidth >= 992) {
         let maxHeight = 0;
-
+  
         cards.forEach(card => {
           card.style.height = 'auto';
           let h = card.offsetHeight;
           if (h > maxHeight) maxHeight = h;
         });
-
+  
         cards.forEach(card => {
           card.style.height = maxHeight + 'px';
         });
@@ -192,11 +187,14 @@ const viewProducts = () => {
         });
       
       };
-
-    }, 1000);
   
-  });
-
+    }, 1000);
+    
+  } catch(error) {
+    console.error(error);  
+  
+  };
+  
 };
 
 const productDetail = async(idProduct) => {
@@ -480,7 +478,7 @@ const main = () => {
   navCart.addEventListener('click', myCart);
   
   viewProducts();
-  renderCategories(categoriesContainer);
+  renderCategoriesOnMenu(categoriesContainer);
   counterProductsInCart();
 
 };
