@@ -43,15 +43,28 @@ const renderCategories = async(container) => {
   try{
     const allCategories = await categoriesList();
     
-    return allCategories.forEach(category => {
+    allCategories.forEach((category, index) => {
       const li = document.createElement('li');
+      const a = document.createElement('a');
+ 
       const categoryElement = `
-        <a class="dropdown-item" href="#" data-id=${category}>${category}</a>
+        <a id="categoryAnchor-${index}" class="dropdown-item" href="#" data-id=${category}>${category}</a>
       `;
 
-      li.innerHTML = categoryElement;
+      a.innerHTML = categoryElement;
 
+      li.appendChild(a);
       container.appendChild(li);
+
+      const categoryAnchor = document.getElementById(`categoryAnchor-${index}`);
+
+      if (categoryAnchor) {
+        categoryAnchor.addEventListener('click', () => {
+          filterByCategory(categoryAnchor.dataset.id);
+
+        });
+
+      };
 
     });
 
@@ -59,6 +72,11 @@ const renderCategories = async(container) => {
     console.error(error);
 
   };
+
+};
+
+const filterByCategory = (categoryName) => {
+  console.log(categoryName);
 
 };
 
