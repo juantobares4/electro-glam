@@ -144,11 +144,16 @@ export const totalPriceCart = () => {
 
 export const renderProductsWithFilters = async(categoryName) => {
   const products = await fetchData();
-  
+  const header = document.getElementById('headerProductsList');
+
   const renderProducts = 
   categoryName ?
-   products.filter(product => product.category === categoryName) 
-   : products;
+   products.filter(product => {
+    header.innerText = `Buscar por: ${categoryName}`;
+     
+    return product.category === categoryName;
+
+  }) : products;
 
   return renderProducts;
 
