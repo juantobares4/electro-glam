@@ -44,7 +44,7 @@ export const getStatusIcon = (status) => {
 
 export const renderRatingStars = (rating) => {
   let maxStars = 5;
-  let starFill = '<img class="mb-1" src="images/assets/star-fill.svg" alt="Star">';
+  let starFill = '<img class="mb-1" src="images/assets/star-fill.svg" alt="Star fill">';
   let star = '<img class="mb-1" src="images/assets/star.svg" alt="Star">';
   let message = '';
   let roundedRating = Math.round(rating);
@@ -157,4 +157,30 @@ export const renderProductsWithFilters = async(categoryName) => {
 
   return renderProducts;
 
-}; 
+};
+
+const normalizeText = (text) => {
+  return text.toLowerCase().trim();
+
+};
+
+export const filterProductsByProperties = async(prop) => {
+  try{
+    const products = await fetchData();
+  
+    if (!prop) return;
+  
+    const filteredResults = products.filter(product => 
+      normalizeText(product.title).includes(normalizeText(prop)) || 
+      normalizeText(product.category).includes(normalizeText(prop))
+    
+    );
+    
+    return filteredResults;
+
+  } catch(error) {
+    console.error(error);
+
+  };
+
+};

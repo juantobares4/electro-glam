@@ -1,9 +1,10 @@
 import { fetchData } from "./fetch.js";
-import { renderProductsWithFilters, getDataFromLocalStorage, saveDataInLocalStorage, renderRatingStars, showToast, totalPriceCart } from "./utils.js";
+import { renderProductsWithFilters, getDataFromLocalStorage, saveDataInLocalStorage, renderRatingStars, showToast, totalPriceCart, filterProductsByProperties } from "./utils.js";
 
 const navCart = document.getElementById('navCart');
 const mainContainer = document.getElementById('products-list');
 const categoriesContainer = document.getElementById('categoriesContainer');
+const formSearchProducts = document.getElementById('searchProducts');
 
 const loadingMessage = (container) => {
   let containerLoadingMessage = document.createElement('div');
@@ -36,6 +37,17 @@ const categoriesList = async() => {
     console.error(error);
 
   };
+
+};
+
+const handleSearchByAttributes = async(event) => {
+  event.preventDefault();
+
+  const inputAttribute = document.getElementById('inputAttribute').value;
+  const results = await filterProductsByProperties(inputAttribute);
+
+  console.log(results);
+  // viewProducts(results);
 
 };
 
@@ -476,6 +488,7 @@ const removeProductFromCart = async(productId) => {
 
 const main = () => {
   navCart.addEventListener('click', myCart);
+  formSearchProducts.addEventListener('submit', handleSearchByAttributes);
   
   viewProducts();
   renderCategoriesOnMenu(categoriesContainer);
