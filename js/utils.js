@@ -142,23 +142,6 @@ export const totalPriceCart = () => {
 
 };
 
-export const renderProductsWithFilters = async(categoryName) => {
-  const products = await fetchData();
-  const header = document.getElementById('headerProductsList');
-
-  const renderProducts = 
-  categoryName ?
-   products.filter(product => {
-    header.innerText = `Buscar por: ${categoryName}`;
-     
-    return product.category === categoryName;
-
-  }) : products;
-
-  return renderProducts;
-
-};
-
 const normalizeText = (text) => {
   return text.toLowerCase().trim();
 
@@ -168,11 +151,12 @@ export const filterProductsByProperties = async(prop) => {
   try{
     const products = await fetchData();
   
-    if (!prop) return;
+    if (!prop) return products;
   
-    const filteredResults = products.filter(product => 
-      normalizeText(product.title).includes(normalizeText(prop)) || 
-      normalizeText(product.category).includes(normalizeText(prop))
+    const filteredResults = 
+      products.filter(product => 
+        normalizeText(product.title).includes(normalizeText(prop)) || 
+        normalizeText(product.category).includes(normalizeText(prop))
     
     );
     
@@ -182,5 +166,18 @@ export const filterProductsByProperties = async(prop) => {
     console.error(error);
 
   };
+
+};
+
+export const renderProductsWithFilters = async(categoryName) => {
+  const products = await fetchData();
+  const header = document.getElementById('headerProductsList');
+     
+  if (categoryName) header.innerText = `Buscar por: ${categoryName}`;
+
+  const renderProducts = categoryName ?
+    products.filter(product => product.category === categoryName) : products;
+
+  return renderProducts;
 
 };

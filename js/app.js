@@ -92,10 +92,10 @@ const viewProducts = async(filter) => {
     let containerProducts = document.getElementById('products-list');
     containerProducts.textContent = '';
     
+    loadingMessage(containerProducts);
+    
     const products = await renderProductsWithFilters(filter);
   
-    loadingMessage(containerProducts);
-        
     setTimeout(() => { 
       let cards = [];
       containerProducts.innerHTML = '';
