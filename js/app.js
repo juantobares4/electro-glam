@@ -1,55 +1,10 @@
 import { fetchData } from "./fetch.js";
-import { renderProductsWithFilters, getDataFromLocalStorage, saveDataInLocalStorage, renderRatingStars, showToast, totalPriceCart, filterProductsByProperties } from "./utils.js";
+import { categoriesList, filterProducts, getDataFromLocalStorage, saveDataInLocalStorage, renderRatingStars, showToast, totalPriceCart } from "./utils.js";
 
 const navCart = document.getElementById('navCart');
-const mainContainer = document.getElementById('products-list');
+const mainContainer = document.getElementById('productsList');
 const categoriesContainer = document.getElementById('categoriesContainer');
 const formSearchProducts = document.getElementById('searchProducts');
-
-const loadingMessage = (container) => {
-  let containerLoadingMessage = document.createElement('div');
-  let elementMessage = document.createElement('p');
-
-  let loadingMessage = 'Cargando los productos...';
-  containerLoadingMessage.className = 'd-flex align-items-center justify-content-center mt-5';
-  
-  elementMessage.innerText = loadingMessage;
-  containerLoadingMessage.style.fontSize = '1rem';
-
-  containerLoadingMessage.appendChild(elementMessage);
-  
-  container.appendChild(containerLoadingMessage);
-
-  elementMessage.style.fontFamily = 'var(--font-main)';
-
-};
-
-const categoriesList = async() => {
-  try{
-    let products = await fetchData();
-    let productsCategories = products.map(product => product.category);
-    let newArray = new Set(productsCategories); // Set es una estructura de datos que no puede almacenar valores duplicados.
-    let allCategories = [...newArray];
-
-    return allCategories;
-
-  } catch(error) {
-    console.error(error);
-
-  };
-
-};
-
-const handleSearchByAttributes = async(event) => {
-  event.preventDefault();
-
-  const inputAttribute = document.getElementById('inputAttribute').value;
-  const results = await filterProductsByProperties(inputAttribute);
-
-  console.log(results);
-  // viewProducts(results);
-
-};
 
 const renderCategoriesOnMenu = async(container) => {
   try{
@@ -72,7 +27,10 @@ const renderCategoriesOnMenu = async(container) => {
 
       if (categoryAnchor) {
         categoryAnchor.addEventListener('click', () => {
-          viewProducts(categoryAnchor.dataset.id);
+          handleFilterProducts({  
+            categoryName: categoryAnchor.dataset.id
+
+          });
 
         });
 
@@ -87,21 +45,22 @@ const renderCategoriesOnMenu = async(container) => {
 
 };
 
-const viewProducts = async(filter) => {
+const viewProducts = async({ searchText = null, categoryName = null } = {}) => {
   try {
-    let containerProducts = document.getElementById('products-list');
-    containerProducts.textContent = '';
+    const products = await fetchData();
     
-    loadingMessage(containerProducts);
+    const filtered = filterProducts(products, {
+      query: searchText || null,
+      category: categoryName || null
+      
+    });
     
-    const products = await renderProductsWithFilters(filter);
-  
     setTimeout(() => { 
       let cards = [];
-      containerProducts.innerHTML = '';
+      
+      mainContainer.textContent = '';
         
-      products.forEach(product => {
-  
+      filtered.forEach(product => {
         let colDiv = document.createElement('div');
         colDiv.className = 'col-12 col-md-6 col-lg-6 mb-4 d-flex';
   
@@ -173,7 +132,7 @@ const viewProducts = async(filter) => {
         cardDiv.appendChild(imageContainer);
         cardDiv.appendChild(cardBody);
         colDiv.appendChild(cardDiv);
-        containerProducts.appendChild(colDiv);
+        mainContainer.appendChild(colDiv);
   
         cards.push(cardDiv);
       
@@ -486,11 +445,46 @@ const removeProductFromCart = async(productId) => {
 
 };
 
-const main = () => {
-  navCart.addEventListener('click', myCart);
-  formSearchProducts.addEventListener('submit', handleSearchByAttributes);
+const handleFilterProducts = async ({ categoryName = null, searchText = null } = {}) => {
+  try {
+    const inputValue = document.getElementById('inputAttribute').value;
+    const header = document.getElementById('headerProductsList');
+
+    const finalSearch = searchText || inputValue;
+
+    await viewProducts({
+      searchText: categoryName ? null : finalSearch,
+      categoryName
+
+    });
+
+    if (categoryName) {
+      header.innerText = `Buscar por: ${categoryName}`;
+    
+    } else if (finalSearch) {
+      header.innerText = `Resultados para: ${finalSearch}`;
+    
+    } else {
+      header.innerText = 'Todos los productos';
+    
+    };
+
+  } catch(error) {
+    console.error(error);
   
-  viewProducts();
+  };
+
+};
+
+const main = (event) => {
+  navCart.addEventListener('click', myCart);
+  
+  formSearchProducts.addEventListener('submit',() => {
+    handleFilterProducts();
+
+  });
+  
+  handleFilterProducts(event);
   renderCategoriesOnMenu(categoriesContainer);
   counterProductsInCart();
 

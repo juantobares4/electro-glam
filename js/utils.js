@@ -12,6 +12,22 @@ export const saveDataInLocalStorage = (data) => {
 
 };
 
+export const categoriesList = async() => {
+  try{
+    let products = await fetchData();
+    let productsCategories = products.map(product => product.category);
+    let newArray = new Set(productsCategories); // Set es una estructura de datos que no puede almacenar valores duplicados.
+    let allCategories = [...newArray];
+
+    return allCategories;
+
+  } catch(error) {
+    console.error(error);
+
+  };
+
+};
+
 export const getStatusIcon = (status) => {
   let tag;
   
@@ -147,37 +163,24 @@ const normalizeText = (text) => {
 
 };
 
-export const filterProductsByProperties = async(prop) => {
-  try{
-    const products = await fetchData();
-  
-    if (!prop) return products;
-  
-    const filteredResults = 
-      products.filter(product => 
-        normalizeText(product.title).includes(normalizeText(prop)) || 
-        normalizeText(product.category).includes(normalizeText(prop))
-    
+export const filterProducts = (products, { query, category }) => {
+  let result = [...products];
+
+  if (query){
+    const normalizedQuery = normalizeText(query);
+
+    result = result.filter(product =>
+      normalizeText(product.title).includes(normalizedQuery) ||
+      normalizeText(product.category).includes(normalizedQuery)
     );
-    
-    return filteredResults;
-
-  } catch(error) {
-    console.error(error);
-
+  
   };
 
-};
+  if (category){
+    result = result.filter(product => product.category === category);
+  
+  };
 
-export const renderProductsWithFilters = async(categoryName) => {
-  const products = await fetchData();
-  const header = document.getElementById('headerProductsList');
-     
-  if (categoryName) header.innerText = `Buscar por: ${categoryName}`;
-
-  const renderProducts = categoryName ?
-    products.filter(product => product.category === categoryName) : products;
-
-  return renderProducts;
+  return result;
 
 };
