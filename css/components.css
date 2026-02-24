@@ -71,6 +71,20 @@ nav a:hover{
 
 }
 
+#emptyProductsList{
+  margin-top: 100px;
+  text-align: center;
+  font-family: var(--font-main);
+
+}
+
+#emptyProductsList span{
+  font-size: 1.05em;
+  font-weight: 600;
+  display: block;
+
+}
+
 .img-cart{
   width: 3rem;
   height: 3rem;

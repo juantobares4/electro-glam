@@ -5,9 +5,10 @@ const navCart = document.getElementById('navCart');
 const mainContainer = document.getElementById('productsList');
 const categoriesContainer = document.getElementById('categoriesContainer');
 const formSearchProducts = document.getElementById('searchProducts');
+const header = document.getElementById('headerProductsList');
 
 const renderCategoriesOnMenu = async(container) => {
-  try{
+  try {
     const allCategories = await categoriesList();
     
     allCategories.forEach((category, index) => {
@@ -27,7 +28,7 @@ const renderCategoriesOnMenu = async(container) => {
 
       if (categoryAnchor) {
         categoryAnchor.addEventListener('click', () => {
-          handleFilterProducts({  
+          handleCategoriesDropdown({  
             categoryName: categoryAnchor.dataset.id
 
           });
@@ -45,118 +46,123 @@ const renderCategoriesOnMenu = async(container) => {
 
 };
 
-const viewProducts = async({ searchText = null, categoryName = null } = {}) => {
+const viewProducts = (products, { type = null, value = null } = {}) => {
   try {
-    const products = await fetchData();
-    
-    const filtered = filterProducts(products, {
-      query: searchText || null,
-      category: categoryName || null
-      
-    });
-    
+    const filteredProducts = filterProducts(products, { type: type, value: value });
+
     setTimeout(() => { 
       let cards = [];
-      
+    
       mainContainer.textContent = '';
-        
-      filtered.forEach(product => {
-        let colDiv = document.createElement('div');
-        colDiv.className = 'col-12 col-md-6 col-lg-6 mb-4 d-flex';
-  
-        let cardDiv = document.createElement('div');
-        cardDiv.className = 'card rounded-0 border-1 border-black w-100 d-flex flex-column';
-  
-        let imageContainer = document.createElement('div');
-        imageContainer.className = 'd-flex justify-content-center align-items-center';
-        imageContainer.style.height = '200px';
-        imageContainer.style.padding = '10px';
-  
-        let imageProduct = document.createElement('img');
-        imageProduct.src = product.image;
-        imageProduct.className = 'img-fluid';
-        imageProduct.style.maxHeight = '100%';
-        imageProduct.style.maxWidth = '100%';
-        imageProduct.style.objectFit = 'contain';
-        imageProduct.alt = product.title;
-  
-        imageContainer.appendChild(imageProduct);
-  
-        let cardBody = document.createElement('div');
-        cardBody.className = 'card-body text-center d-flex flex-column';
-  
-        let cardTitle = document.createElement('h5');
-        cardTitle.style.fontSize = '17px';
-        cardTitle.style.lineHeight = '1.4';
-        cardTitle.style.wordBreak = 'break-word';
-        cardTitle.innerHTML = `<b>${product.title}</b>`;
-  
-        let productCategory = document.createElement('small');
-        productCategory.style.lineHeight = '1.4';
-        productCategory.style.wordBreak = 'break-word';
-        productCategory.style.marginBlock = '10px';
-        productCategory.innerHTML = `<b>${product.category}</b>`;
-  
-        let cardText = document.createElement('p');
-        cardText.innerHTML = `<b>€${product.price}</b>`;
-        cardText.style.fontSize = '17px';
-        cardText.className = 'card-text';
-  
-        let buttonsContainer = document.createElement('div');
-        buttonsContainer.className = 'mt-auto';
-  
-        let buttonBuyProduct = document.createElement('button');
-        buttonBuyProduct.className = 'btn button-products w-100 mb-2';
-        buttonBuyProduct.innerText = 'Añadir a la cesta';
-        buttonBuyProduct.addEventListener('click', () => {
-          addProductToCart(product.id);
-        
-        });
-  
-        let buttonViewDetail = document.createElement('button');
-        buttonViewDetail.className = 'btn button-products w-100';
-        buttonViewDetail.innerText = 'Más detalles';
-        buttonViewDetail.addEventListener('click', () => {
-          productDetail(product.id);
-        
-        });
-  
-        buttonsContainer.appendChild(buttonBuyProduct);
-        buttonsContainer.appendChild(buttonViewDetail);
-  
-        cardBody.appendChild(cardTitle);
-        cardBody.appendChild(productCategory);
-        cardBody.appendChild(cardText);
-        cardBody.appendChild(buttonsContainer);
-  
-        cardDiv.appendChild(imageContainer);
-        cardDiv.appendChild(cardBody);
-        colDiv.appendChild(cardDiv);
-        mainContainer.appendChild(colDiv);
-  
-        cards.push(cardDiv);
       
-      });
-  
-      if (window.innerWidth >= 992) {
-        let maxHeight = 0;
-  
-        cards.forEach(card => {
-          card.style.height = 'auto';
-          let h = card.offsetHeight;
-          if (h > maxHeight) maxHeight = h;
+      if (filteredProducts.length) {
+        filteredProducts.forEach(product => {
+          let colDiv = document.createElement('div');
+          colDiv.className = 'col-12 col-md-6 col-lg-6 mb-4 d-flex';
+    
+          let cardDiv = document.createElement('div');
+          cardDiv.className = 'card rounded-0 border-1 border-black w-100 d-flex flex-column';
+    
+          let imageContainer = document.createElement('div');
+          imageContainer.className = 'd-flex justify-content-center align-items-center';
+          imageContainer.style.height = '200px';
+          imageContainer.style.padding = '10px';
+    
+          let imageProduct = document.createElement('img');
+          imageProduct.src = product.image;
+          imageProduct.className = 'img-fluid';
+          imageProduct.style.maxHeight = '100%';
+          imageProduct.style.maxWidth = '100%';
+          imageProduct.style.objectFit = 'contain';
+          imageProduct.alt = product.title;
+    
+          imageContainer.appendChild(imageProduct);
+    
+          let cardBody = document.createElement('div');
+          cardBody.className = 'card-body text-center d-flex flex-column';
+    
+          let cardTitle = document.createElement('h5');
+          cardTitle.style.fontSize = '17px';
+          cardTitle.style.lineHeight = '1.4';
+          cardTitle.style.wordBreak = 'break-word';
+          cardTitle.innerHTML = `<b>${product.title}</b>`;
+    
+          let productCategory = document.createElement('small');
+          productCategory.style.lineHeight = '1.4';
+          productCategory.style.wordBreak = 'break-word';
+          productCategory.style.marginBlock = '10px';
+          productCategory.innerHTML = `<b>${product.category}</b>`;
+    
+          let cardText = document.createElement('p');
+          cardText.innerHTML = `<b>€${product.price}</b>`;
+          cardText.style.fontSize = '17px';
+          cardText.className = 'card-text';
+    
+          let buttonsContainer = document.createElement('div');
+          buttonsContainer.className = 'mt-auto';
+    
+          let buttonBuyProduct = document.createElement('button');
+          buttonBuyProduct.className = 'btn button-products w-100 mb-2';
+          buttonBuyProduct.innerText = 'Añadir a la cesta';
+          buttonBuyProduct.addEventListener('click', () => {
+            addProductToCart(product.id);
+          
+          });
+    
+          let buttonViewDetail = document.createElement('button');
+          buttonViewDetail.className = 'btn button-products w-100';
+          buttonViewDetail.innerText = 'Más detalles';
+          buttonViewDetail.addEventListener('click', () => {
+            productDetail(product.id);
+          
+          });
+    
+          buttonsContainer.appendChild(buttonBuyProduct);
+          buttonsContainer.appendChild(buttonViewDetail);
+    
+          cardBody.appendChild(cardTitle);
+          cardBody.appendChild(productCategory);
+          cardBody.appendChild(cardText);
+          cardBody.appendChild(buttonsContainer);
+    
+          cardDiv.appendChild(imageContainer);
+          cardDiv.appendChild(cardBody);
+          colDiv.appendChild(cardDiv);
+          mainContainer.appendChild(colDiv);
+    
+          cards.push(cardDiv);
+        
         });
-  
-        cards.forEach(card => {
-          card.style.height = maxHeight + 'px';
-        });
+      
+        if (window.innerWidth >= 992) {
+          let maxHeight = 0;
+    
+          cards.forEach(card => {
+            card.style.height = 'auto';
+            let h = card.offsetHeight;
+            if (h > maxHeight) maxHeight = h;
+          });
+    
+          cards.forEach(card => {
+            card.style.height = maxHeight + 'px';
+          });
+        
+        } else {
+          cards.forEach(card => {
+            card.style.minHeight = 'auto';
+          
+          });
+        
+        };
       
       } else {
-        cards.forEach(card => {
-          card.style.minHeight = 'auto';
+        const emptyMessageElement = document.createElement('p');
         
-        });
-      
+        emptyMessageElement.id = 'emptyProductsList';
+        emptyMessageElement.innerHTML = '<span>No hay productos</span> con ese nombre';
+
+        mainContainer.appendChild(emptyMessageElement);
+
       };
   
     }, 1000);
@@ -169,7 +175,7 @@ const viewProducts = async({ searchText = null, categoryName = null } = {}) => {
 };
 
 const productDetail = async(idProduct) => {
-  try{
+  try {
     let dataProducts = await fetchData();
     let findProduct = dataProducts.find(product => product.id === idProduct);
     let modalProduct = document.createElement('div');
@@ -235,7 +241,7 @@ const productDetail = async(idProduct) => {
 };
 
 const addProductToCart = async(productId) => {
-  try{
+  try {
     let productsInLocalStorage = getDataFromLocalStorage();
     
     let productsAPI = await fetchData();
@@ -423,9 +429,8 @@ const myCart = (event) => {
 
 };
 
-
 const removeProductFromCart = async(productId) => {
-  try{
+  try {
     let productsInLocalStorage = getDataFromLocalStorage();
     let deleteProduct = productsInLocalStorage.findIndex(product => product.id === productId);
 
@@ -445,29 +450,27 @@ const removeProductFromCart = async(productId) => {
 
 };
 
-const handleFilterProducts = async ({ categoryName = null, searchText = null } = {}) => {
+const handleFormSearchProducts = (event) => {
+  event.preventDefault();
+
+  const inputValue = document.getElementById('inputAttribute').value;
+
+  handleFilterProducts({ type: 'search', value: inputValue });
+  header.innerText = `Resultados para: ${inputValue}`;
+
+};
+
+const handleCategoriesDropdown = ({ categoryName = null } = {}) => {
+  handleFilterProducts({ type: 'dropdown', value: categoryName }); 
+  header.innerText = `Buscar por: ${categoryName}`;
+
+};
+
+const handleFilterProducts = async({ type = null, value = null } = {}) => {
   try {
-    const inputValue = document.getElementById('inputAttribute').value;
-    const header = document.getElementById('headerProductsList');
+    const products = await fetchData();
 
-    const finalSearch = searchText || inputValue;
-
-    await viewProducts({
-      searchText: categoryName ? null : finalSearch,
-      categoryName
-
-    });
-
-    if (categoryName) {
-      header.innerText = `Buscar por: ${categoryName}`;
-    
-    } else if (finalSearch) {
-      header.innerText = `Resultados para: ${finalSearch}`;
-    
-    } else {
-      header.innerText = 'Todos los productos';
-    
-    };
+    viewProducts(products, { type: type, value: value });
 
   } catch(error) {
     console.error(error);
@@ -476,15 +479,11 @@ const handleFilterProducts = async ({ categoryName = null, searchText = null } =
 
 };
 
-const main = (event) => {
+const main = () => {
   navCart.addEventListener('click', myCart);
-  
-  formSearchProducts.addEventListener('submit',() => {
-    handleFilterProducts();
+  formSearchProducts.addEventListener('submit', handleFormSearchProducts);
 
-  });
-  
-  handleFilterProducts(event);
+  handleFilterProducts();
   renderCategoriesOnMenu(categoriesContainer);
   counterProductsInCart();
 

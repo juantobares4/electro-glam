@@ -163,24 +163,36 @@ const normalizeText = (text) => {
 
 };
 
-export const filterProducts = (products, { query, category }) => {
-  let result = [...products];
+export const filterProducts = (productsList, { type = null, value = null } = {}) => {
+  try {
+    if (!type || !value) return productsList;
 
-  if (query){
-    const normalizedQuery = normalizeText(query);
+    const normalizedValue = normalizeText(value);
 
-    result = result.filter(product =>
-      normalizeText(product.title).includes(normalizedQuery) ||
-      normalizeText(product.category).includes(normalizedQuery)
-    );
+    if (type && value) {
+      switch (type) {
+        case 'dropdown':
+          return productsList.filter(product => product.category === value);
+  
+        case 'search':
+          return productsList.filter(product =>
+            normalizeText(product.title).includes(normalizedValue) || 
+            normalizeText(product.category).includes(value)
+          
+          );
+  
+        default:
+          return productsList;
+      
+      };
+
+    };
+
+  } catch (error) {
+    console.error(error);
+    
+    return productsList;
   
   };
-
-  if (category){
-    result = result.filter(product => product.category === category);
-  
-  };
-
-  return result;
 
 };
