@@ -7,6 +7,16 @@ const categoriesContainer = document.getElementById('categoriesContainer');
 const formSearchProducts = document.getElementById('searchProducts');
 const header = document.getElementById('headerProductsList');
 
+document.addEventListener("DOMContentLoaded", function() {
+  document.addEventListener('hide.bs.modal', function(event) {
+    if (document.activeElement) {
+        document.activeElement.blur();
+    };
+
+  });
+
+});
+
 const renderCategoriesOnMenu = async(container) => {
   try {
     const allCategories = await categoriesList();
@@ -113,6 +123,7 @@ const viewProducts = (products, { type = null, value = null } = {}) => {
           buttonViewDetail.className = 'btn button-products w-100';
           buttonViewDetail.innerText = 'Más detalles';
           buttonViewDetail.addEventListener('click', () => {
+            document.activeElement.blur();
             productDetail(product.id);
           
           });
@@ -301,7 +312,6 @@ const myCart = (event) => {
 
   try {
     if (productsInLocalStorage) {
-
       const deleteDuplicate = (array) => {
         let uniqueProducts = {};
         
@@ -331,7 +341,6 @@ const myCart = (event) => {
       let count = countDuplicate(productsInLocalStorage);
 
       if (productsInLocalStorage.length > 0) {
-
         noneDuplicate.forEach(attr => {
           let productCount = count[attr.title];
           let totalPrice = attr.price * productCount;
@@ -388,12 +397,16 @@ const myCart = (event) => {
               <div class="modal-body"></div>
               <div class="modal-footer">
                 <h6 class="me-2" id="totalCart"></h6>
+                <button disabled id="confirmPurchaseBtn" type="button" class="btn border-1 border-black rounded-0 button-products" data-bs-dismiss="modal">
+                  Comprar
+                </button>
                 <button type="button" class="btn border-1 border-black rounded-0 button-products" data-bs-dismiss="modal">
                   Cerrar
                 </button>
               </div>
             </div>
           </div>
+    
         `;
 
         document.body.appendChild(modalCart);
@@ -401,6 +414,9 @@ const myCart = (event) => {
       };
 
       modalCart.querySelector('.modal-body').innerHTML = modalBodyContent;
+
+      const finishPurchaseBtn = modalCart.querySelector('#confirmPurchaseBtn');
+      finishPurchaseBtn.disabled = productsInLocalStorage.length === 0;
 
       const linkRemove = modalCart.querySelectorAll('.remove-product');
 
