@@ -1,5 +1,5 @@
 import { fetchData } from "./fetch.js";
-import { categoriesList, filterProducts, getDataFromLocalStorage, saveDataInLocalStorage, renderRatingStars, showToast, totalPriceCart } from "./utils.js";
+import { countDuplicate,  deleteDuplicate, categoriesList, filterProducts, getDataFromLocalStorage, saveDataInLocalStorage, renderRatingStars, showToast, totalPriceCart } from "./utils.js";
 
 const navCart = document.getElementById('navCart');
 const mainContainer = document.getElementById('productsList');
@@ -94,12 +94,12 @@ const viewProducts = (products, { type = null, value = null } = {}) => {
           let cardTitle = document.createElement('h5');
           cardTitle.style.fontSize = '17px';
           cardTitle.style.lineHeight = '1.4';
-          cardTitle.style.wordBreak = 'break-word';
+          cardTitle.style.wordBreak = 'break-all';
           cardTitle.innerHTML = `<b>${product.title}</b>`;
     
           let productCategory = document.createElement('small');
           productCategory.style.lineHeight = '1.4';
-          productCategory.style.wordBreak = 'break-word';
+          productCategory.style.wordBreak = 'break-all';
           productCategory.style.marginBlock = '10px';
           productCategory.innerHTML = `<b>${product.category}</b>`;
     
@@ -312,30 +312,6 @@ const myCart = (event) => {
 
   try {
     if (productsInLocalStorage) {
-      const deleteDuplicate = (array) => {
-        let uniqueProducts = {};
-        
-        array.forEach(element => {
-          uniqueProducts[element.title] = element;
-        
-        });
-        
-        return Object.values(uniqueProducts);
-      
-      };
-
-      const countDuplicate = (array) => {
-        let countMap = {};
-
-        array.forEach(element => {
-          countMap[element.title] = (countMap[element.title] || 0) + 1;
-        
-        });
-        
-        return countMap;
-      
-      };
-
       let modalBodyContent = '';
       let noneDuplicate = deleteDuplicate(productsInLocalStorage);
       let count = countDuplicate(productsInLocalStorage);
@@ -398,7 +374,9 @@ const myCart = (event) => {
               <div class="modal-footer">
                 <h6 class="me-2" id="totalCart"></h6>
                 <button disabled id="confirmPurchaseBtn" type="button" class="btn border-1 border-black rounded-0 button-products" data-bs-dismiss="modal">
-                  Comprar
+                  <a class="text-success fw-bold" href='/'>
+                    Comprar
+                  </a>
                 </button>
                 <button type="button" class="btn border-1 border-black rounded-0 button-products" data-bs-dismiss="modal">
                   Cerrar
@@ -417,7 +395,7 @@ const myCart = (event) => {
 
       const finishPurchaseBtn = modalCart.querySelector('#confirmPurchaseBtn');
       finishPurchaseBtn.disabled = productsInLocalStorage.length === 0;
-
+      
       const linkRemove = modalCart.querySelectorAll('.remove-product');
 
       linkRemove.forEach(link => {
@@ -469,10 +447,13 @@ const removeProductFromCart = async(productId) => {
 const handleFormSearchProducts = (event) => {
   event.preventDefault();
 
-  const inputValue = document.getElementById('inputAttribute').value;
+  const inputValue = document.getElementById('inputAttribute').value.trim();
 
-  handleFilterProducts({ type: 'search', value: inputValue });
-  header.innerText = `Resultados para: ${inputValue}`;
+  if (inputValue) {
+    handleFilterProducts({ type: 'search', value: inputValue });
+    header.innerText = `Resultados para: ${inputValue}`;
+    
+  };
 
 };
 

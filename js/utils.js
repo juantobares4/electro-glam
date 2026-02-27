@@ -28,6 +28,30 @@ export const categoriesList = async() => {
 
 };
 
+export const countDuplicate = (array) => {
+  let countMap = {};
+
+  array.forEach(element => {
+    countMap[element.title] = (countMap[element.title] || 0) + 1;
+  
+  });
+  
+  return countMap;
+      
+};
+
+export const deleteDuplicate = (array) => {
+  const uniqueProducts = {};
+  
+  array.forEach(element => {
+    uniqueProducts[element.title] = element;
+  
+  });
+  
+  return Object.values(uniqueProducts);
+      
+};
+
 export const getStatusIcon = (status) => {
   let tag;
   
