@@ -349,7 +349,7 @@ const myCart = (event) => {
         modalBodyContent = `
           <div class="d-flex flex-column flex-md-row align-items-center justify-content-center">
             <img class="empty-cart" src="images/assets/empty-cart.png">
-            <h4 class="text-center">¡Oh, mi cesta está vacía!</h4>
+            <h4 class="text-start fs-5"><span class="d-block py-2 fw-bold">No hay productos</span> en la cesta</h4>
           </div>
         `;
       
@@ -374,7 +374,7 @@ const myCart = (event) => {
               <div class="modal-footer">
                 <h6 class="me-2" id="totalCart"></h6>
                 <button disabled id="confirmPurchaseBtn" type="button" class="btn border-1 border-black rounded-0 button-products" data-bs-dismiss="modal">
-                  <a class="text-success fw-bold" href="/pages/checkout.html">
+                  <a class="text-success fw-bold" href="/pages/checkout/index.html">
                     Comprar
                   </a>
                 </button>
