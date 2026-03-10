@@ -170,7 +170,7 @@ const viewProducts = (products, { type = null, value = null } = {}) => {
         const emptyMessageElement = document.createElement('p');
         
         emptyMessageElement.id = 'emptyProductsList';
-        emptyMessageElement.innerHTML = '<span>No hay productos</span> con ese nombre';
+        emptyMessageElement.innerHTML = '<span class="text-black">No hay productos</span> con ese nombre';
 
         mainContainer.appendChild(emptyMessageElement);
 
@@ -316,7 +316,7 @@ const myCart = (event) => {
       let noneDuplicate = deleteDuplicate(productsInLocalStorage);
       let count = countDuplicate(productsInLocalStorage);
 
-      if (productsInLocalStorage.length > 0) {
+      if (productsInLocalStorage.length) {
         noneDuplicate.forEach(attr => {
           let productCount = count[attr.title];
           let totalPrice = attr.price * productCount;
@@ -329,10 +329,10 @@ const myCart = (event) => {
                 </div>
                 <div class="text-start p-2">
                   <h5 class="mb-1">
-                    ${attr.title}
+                    ${attr.title} x ${productCount}
                   </h5>
                   <p class="mb-0 text-black bg-secondary-subtle py-1">
-                      Precio: €${attr.price} | Cantidad: ${productCount} | Total: €${totalPrice.toFixed(2)}
+                      Precio: €${attr.price} | Total: €${totalPrice.toFixed(2)}
                     <a title="Eliminar producto de la cesta" href="#" class="ms-3 remove-product text-black" data-id="${attr.id}">
                       <i class="bi bi-trash"></i>
                     </a>

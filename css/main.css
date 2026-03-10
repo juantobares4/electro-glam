@@ -30,7 +30,7 @@ p {
 }
 
 button {
-  font-family: var(--font-main);
+  font-family: var(--font-main) !important;
   font-weight: 600;
 
 }

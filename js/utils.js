@@ -220,3 +220,18 @@ export const filterProducts = (productsList, { type = null, value = null } = {})
   };
 
 };
+
+export const purchaseSummary = () => {
+  const products = getDataFromLocalStorage();
+  const uniqueProducts = deleteDuplicate(products);
+  const count = countDuplicate(products);
+
+  return uniqueProducts.map(product => ({
+    title: product.title,
+    price: product.price,
+    quantity: count[product.title],
+    totalPrice: product.price * count[product.title]
+    
+  }));
+
+};
