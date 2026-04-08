@@ -21,8 +21,8 @@ Si bien su uso es sencillo, debemos seguir los siguientes pasos:
 1. Clonar el repositorio (repositorio general): 
 `git clone git@github.com:juantobares4/my-projects.git`
 
-2. Una vez clonado, entrar a la carpeta del proyecto de Challenge-Tienda-Virtual: 
-`cd Challenge-Tienda-Virtual`
+2. Una vez clonado, entrar a la carpeta del proyecto de Electro and Glam: 
+`cd electro-glam`
 
 3. Instalar y correr la aplicación con Live Server -- extensión de VSCode --. Utilizará el puerto 5500 para correr nuestro proyecto.
 
@@ -30,7 +30,6 @@ Si bien su uso es sencillo, debemos seguir los siguientes pasos:
 
 ### 🔨 Futuras implementaciones
 - Simular compras reales
-- Perfil personal.
 - Agregar o eliminar más productos desde el carrito.
 - Actualización visual.
 - Búsqueda de productos.
