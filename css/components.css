@@ -1,0 +1,153 @@
+@import url('./colors/colors.css');
+
+@import url('./fonts/fonts.css');
+
+nav{
+  background-color: var(--light-color);
+
+}
+
+nav a{
+  font-family: var(--font-main);
+  font-size: 1em;
+  color: #000;
+
+
+}
+
+nav a:hover{
+  text-decoration: underline;
+
+}
+
+.brand-container img{
+  padding: 0;
+  margin: 0;
+  max-height: 100px;
+  width: auto;
+  transition: transform 0.2s ease-in-out;
+  
+}
+
+.brand-container img:hover{
+  transform: translateX(5px);
+  
+}
+
+.dropdown{
+  font-family: var(--font-main);
+
+}
+
+.dropdown a:active{
+  color: #000;
+  background-color: #ffffff00;
+
+}
+
+#inputAttribute, #inputPostalCode{
+  font-family: var(--font-main);
+
+}
+
+#cart-counter{
+  color: #000;
+  background-color: rgba(0, 0, 0, 0.484);
+
+}
+
+.view-my-cart{
+  font-family: var(--font-main);
+  font-weight: 900;
+  font-size: 20px;
+  
+}
+
+.empty-cart{
+  width: 100%;
+  max-width: 25rem;
+  height: auto;
+  display: block;
+
+}
+
+#emptyProductsList{
+  margin-top: 100px;
+  text-align: center;
+  font-family: var(--font-main);
+
+}
+
+#emptyProductsList span{
+  font-size: 1.05em;
+  font-weight: 600;
+  display: block;
+
+}
+
+.img-cart{
+  width: 3rem;
+  height: 3rem;
+
+}
+
+/* Efectos para las cards */
+
+.card{
+  transition: transform 0.3s ease;
+  z-index: 1;
+
+}
+
+.card:hover{
+  -webkit-transform: scale(1.03);
+  transform: scale(1.03);
+  z-index: 2;
+
+} 
+
+/* --------------------- */
+
+.button-products{
+  font-family: var(--font-main);
+  border-radius: 0%;
+  border: 1px solid black;
+
+}
+
+.button-products:hover{
+  background-color: var(--secondary-color);
+  color: var(--light-color);
+
+}
+
+.modal-header{
+  border-bottom: 1px solid black;
+
+}
+
+.modal-footer{
+  border-top: 1px solid black;
+
+}
+
+.modal-content{
+  border-radius: 0;
+
+}
+
+@media (max-width: 767px) {
+  #productsContainer{
+    min-height: 50px;
+
+  } 
+
+}
+
+@media (min-width: 768px) {
+  #productsContainer{
+    min-height: 250px;
+
+  } 
+
+}
