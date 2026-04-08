@@ -18,8 +18,8 @@ HTML, CSS Y JavaScript.
 ### ✅ ¿Cómo comenzar a utilizarla?
 Si bien su uso es sencillo, debemos seguir los siguientes pasos:
 
-1. Clonar el repositorio (repositorio general): 
-`git clone git@github.com:juantobares4/my-projects.git`
+1. Clonar el repositorio: 
+`git@github.com:juantobares4/electro-glam.git` (SSH) o `https://github.com/juantobares4/electro-glam.git` (HTTPS)
 
 2. Una vez clonado, entrar a la carpeta del proyecto de Electro and Glam: 
 `cd electro-glam`
