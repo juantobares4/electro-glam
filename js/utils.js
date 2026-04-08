@@ -58,7 +58,7 @@ export const getStatusIcon = (status) => {
   
   switch (status) {
     case 'error':
-      tag = '<i class="bi bi-x-circle me-2"></i>';  
+      tag = '<i class="bi bi-x-octagon me-2"></i>';  
 
       break;
 
@@ -145,10 +145,18 @@ export const showToast = (type, title, msg, container) => {
   toast.setAttribute('aria-live', 'assertive');
   toast.setAttribute('aria-atomic', 'true');
 
+  const typeMap = {
+    success: "success",
+    error: "danger",
+    info: "info",
+    warning: "warning"
+  
+  };
+
   toast.innerHTML = `
     <div class="toast-header titles-font">
       ${iconElement}
-      <strong class="me-auto text-${type === 'success' ? 'success' : 'danger'}" style="font-size: 14px">${title}</strong>
+      <strong class="me-auto text-${typeMap[type] || "primary"}" style="font-size: 14px">${title}</strong>
       <small class="fw-600 ms-2">${whatTime()}hs</small>
       <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
     </div>

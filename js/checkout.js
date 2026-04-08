@@ -1,9 +1,10 @@
-import { getDataFromLocalStorage, purchaseSummary, totalPriceCart } from "./utils.js";
+import { getDataFromLocalStorage, purchaseSummary, showToast, totalPriceCart } from "./utils.js";
 import { postalCodes } from "./postalCodes.js";
 
 const formPostalCode = document.getElementById('formPostalCode');
 const selectedPostalCode = document.getElementById('selectedPostalCode');
-const btn = document.getElementById('finishPurchase');
+const finishPurchaseBtn = document.getElementById('finishPurchase');
+const mainContainer = document.getElementById('purchaseSummary');
 
 const viewPurchaseSummary = () => {
   const cartSummary = purchaseSummary();
@@ -83,14 +84,18 @@ const handleCalculateShipping = (priceShipping) => {
 
 };
 
-btn.addEventListener('click', () => {
-  console.log('CLICK FUNCIONA');
+const handleFinishPurchase = () => {
+  if (!selectedPostalCode.value) {
+    showToast('error', 'Seleccioná un Código Postal', 'Debes seleccionar el código postal correspondiente a tu provincia.', mainContainer);
 
-});
+  };
+
+};
 
 const main = () => {
   formPostalCode?.addEventListener('submit', handleCalculateShipping);
-  
+  finishPurchaseBtn.addEventListener('click', handleFinishPurchase)
+
   viewPurchaseSummary();
   renderPostalCodes();
 
