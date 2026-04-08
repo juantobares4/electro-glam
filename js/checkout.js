@@ -132,7 +132,9 @@ const handleCalculateShipping = (priceShipping) => {
 
   if (shippingCostsElement && totalPriceElement){
     shippingCostsElement.innerText = priceShipping;
-    totalPriceElement.innerText = Number(priceShipping) + Number(totalPriceCart());
+    const total = Number(priceShipping) + Number(totalPriceCart());
+    
+    totalPriceElement.innerText = total.toFixed(2);
 
   };
 
