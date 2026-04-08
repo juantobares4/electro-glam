@@ -135,3 +135,19 @@ nav a:hover{
   border-radius: 0;
 
 }
+
+@media (max-width: 767px) {
+  #summaryList{
+    min-height: 200px;
+
+  } 
+
+}
+
+@media (min-width: 768px) {
+  #summaryList{
+    min-height: 400px;
+
+  } 
+
+}

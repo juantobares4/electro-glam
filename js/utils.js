@@ -1,4 +1,5 @@
 import { fetchData } from "./fetch.js";
+import { postalCodes } from "./postalCodes.js";
 
 export const getDataFromLocalStorage = () => {
   let data = localStorage.getItem('data');

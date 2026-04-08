@@ -20,31 +20,31 @@
   <main class="container p-5" id="purchaseSummary">
     <div class="row">
       <header class="col-12" id="purchaseSummaryHeader">
-        <h3 class="fs-4 text-decoration-underline text-center text-md-start">Resumen de mi compra</h3>
+        <h3 class="fs-4 text-decoration-underline">Resumen de mi compra</h3>
       </header>
 
       <div class="col-12 mt-2" id="purchaseSummaryBody">
         <div class="row">
-          <div class="col-12 col-md-6 d-flex flex-column p-4 font-text gap-3 text-black" id="summaryList" style="min-height: 250px;">
+          <div class="col-12 col-md-6 d-flex flex-column p-4 font-text gap-3 text-black" id="summaryList">
+            <a href="/index.html" class="btn btn-outline-dark order-last mt-5 border p-2 border-black rounded-0 font-title">Ver más productos...</a>
           </div>
-          <div class="col-12 col-md-6 d-flex flex-column p-4 font-text gap-1 text-black border rounded h-50 border-1 border-black" id="summaryTotalPrice">
-            <button class="col-12 col-md-8 btn btn-outline-dark rounded-0 order-last">Continuar compra</button> 
+          <div class="col-12 col-md-6 d-flex flex-column p-4 font-text gap-1 text-black border rounded h-50 border-1 border-black" >
+            <div id="summaryTotalPrice"></div>
+            <button id="finishPurchase" class="col-12 col-md-8 btn btn-outline-dark rounded-0 order-last" type="button">Finalizar compra</button> 
           </div>
         </div>
       </div>
 
-      <div class="border-top border-1 border-black p-4 col-12 col-md-6 mt-5 mt-md-3" id="purchaseSummaryFooter">
+      <div class="border-top border-1 border-black p-4 col-12 col-md-6 mt-5 mt-md-3" id="formPostalCode">
         <h4 class="fs-5 text-black">Calculá tu envío...</h4>
         <form id="calculateShipping" class="d-flex align-items-center font-text mt-3">
-          <input id="inputPostalCode" class="form-control me-1 rounded-0 border-1 border-dark" 
-            type="text" placeholder="Código Postal..." aria-label="Calculate shipping">
-          <button class="btn btn-dark rounded-0" type="submit">
-            <i class="bi bi-geo-alt"></i>
-          </button>
+          <select id="selectedPostalCode" class="form-select rounded-0 border-1 border-dark me-1" aria-label="Default select">
+            <option selected disabled value="0">Seleccioná un código postal</option>
+          </select>
         </form>
       </div>
     </div>
-  </main>  
+  </main>
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

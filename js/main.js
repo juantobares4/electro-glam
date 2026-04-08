@@ -27,6 +27,7 @@ const renderCategoriesOnMenu = async(container) => {
  
       const categoryElement = `
         <a id="categoryAnchor-${index}" class="dropdown-item" href="#" data-id="${category}">${category}</a>
+      
       `;
 
       a.innerHTML = categoryElement;
@@ -308,7 +309,7 @@ const renderTotalPrice = () => {
 const myCart = (event) => {
   event?.preventDefault();
 
-  let productsInLocalStorage = getDataFromLocalStorage();
+  const productsInLocalStorage = getDataFromLocalStorage();
 
   try {
     if (productsInLocalStorage) {
