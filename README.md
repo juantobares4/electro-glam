@@ -28,7 +28,7 @@ Si bien su uso es sencillo, debemos seguir los siguientes pasos:
 
 4. Click derecho en Go Live en la barra inferior derecha de nuestro editor de texto (VSCode).
 
-### 🔨 Futuras implementaciones
+### 🔨 Funcionalidades
 - Simular compras reales
 - Agregar o eliminar más productos desde el carrito.
 - Actualización visual.
@@ -36,7 +36,7 @@ Si bien su uso es sencillo, debemos seguir los siguientes pasos:
 
 ### 📧 Contacto
 [Gmail](mailto:juantobares4@gmail.com)
-[Whatsapp](https://wa.me/543584860460)
+[Telegram](https://t.me/JuanCruzTobares4)
 [LinkedIn](https://www.linkedin.com/in/juancruz-tobares-dev)
 
 ---
