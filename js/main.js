@@ -394,8 +394,8 @@ const myCart = (event) => {
 
       modalCart.querySelector('.modal-body').innerHTML = modalBodyContent;
 
-      const finishPurchaseBtn = modalCart.querySelector('#confirmPurchaseBtn');
-      finishPurchaseBtn.disabled = productsInLocalStorage.length === 0;
+      const confirmPurchaseBtn = modalCart.querySelector('#confirmPurchaseBtn');
+      confirmPurchaseBtn.disabled = productsInLocalStorage.length === 0;
       
       const linkRemove = modalCart.querySelectorAll('.remove-product');
 

@@ -156,11 +156,11 @@ export const showToast = (type, title, msg, container) => {
   toast.innerHTML = `
     <div class="toast-header titles-font">
       ${iconElement}
-      <strong class="me-auto text-${typeMap[type] || "primary"}" style="font-size: 14px">${title}</strong>
+      <strong class="me-auto text-${typeMap[type] || "primary"} font-title" style="font-size: 14px">${title}</strong>
       <small class="fw-600 ms-2">${whatTime()}hs</small>
       <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
     </div>
-    <div class="toast-body text-center paragraph-font" style="font-size: 13px">
+    <div class="toast-body text-center text-font" style="font-size: 13px">
       ${msg}
     </div>
   

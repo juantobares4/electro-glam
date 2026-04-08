@@ -137,16 +137,16 @@ nav a:hover{
 }
 
 @media (max-width: 767px) {
-  #summaryList{
-    min-height: 200px;
+  #productsContainer{
+    min-height: 50px;
 
   } 
 
 }
 
 @media (min-width: 768px) {
-  #summaryList{
-    min-height: 400px;
+  #productsContainer{
+    min-height: 250px;
 
   } 
 

@@ -6,14 +6,26 @@ const selectedPostalCode = document.getElementById('selectedPostalCode');
 const finishPurchaseBtn = document.getElementById('finishPurchase');
 const mainContainer = document.getElementById('purchaseSummary');
 
+let productsInCart = getDataFromLocalStorage();
+
+document.addEventListener("DOMContentLoaded", function() {
+  document.addEventListener('hide.bs.modal', function(event) {
+    if (document.activeElement) {
+        document.activeElement.blur();
+    };
+
+  });
+
+});
+
 const viewPurchaseSummary = () => {
   const cartSummary = purchaseSummary();
-  const summaryList = document.getElementById('summaryList');
+  const productsContainer = document.getElementById('productsContainer');
   const summaryTotalPrice = document.getElementById('summaryTotalPrice');
 
   if (cartSummary.length) {
     cartSummary.forEach(product => {
-        summaryList.innerHTML += `
+        productsContainer.innerHTML += `
           <span class="font-title fw-bold text-wrap">${product.title} x ${product.quantity}</span>
           <span>Precio por unidad: €${product.price}</span>
           ${product.quantity > 1 ? `<span>Precio total: €${product.totalPrice}</span>` : ''}
@@ -22,7 +34,7 @@ const viewPurchaseSummary = () => {
     });
 
   } else {
-    summaryList.innerHTML += `
+    productsContainer.innerHTML += `
       <div class="d-flex flex-column flex-md-row align-items-center justify-content-start">
         <h6 class="text-start"><span class="d-block py-1 fw-bold">No hay productos</span> en el carrito.</h4>
       </div>
@@ -72,6 +84,48 @@ const renderPostalCodes = () => {
 
 };
 
+const showPurchaseSuccessModal = () => {
+  const modal = document.createElement("div");
+
+  modal.className = "modal fade";
+  modal.tabIndex = -1;
+
+  modal.innerHTML = `
+    <div class="modal-dialog modal-fullscreen">
+      <div class="modal-content">
+        <div class="modal-body d-flex justify-content-center align-items-center text-center flex-column">
+          <h2 class="mb-3 text-success font-title">Compra realizada</h2>
+          <p class="mb-4">Tu compra se realizó correctamente.</p>
+          <button class="btn btn-outline-dark rounded-0" data-bs-dismiss="modal">
+            Aceptar
+          </button>
+        </div>
+      </div>
+    </div>
+
+  `;
+
+  document.body.appendChild(modal);
+
+  const bsModal = new bootstrap.Modal(modal);
+  bsModal.show();
+
+  modal.addEventListener("hidden.bs.modal", () => {
+    localStorage.clear();
+    productsInCart = [];
+
+    document.getElementById('productsContainer').innerHTML = "";
+    document.getElementById('summaryTotalPrice').innerHTML = "";
+    selectedPostalCode.value = '';
+
+    viewPurchaseSummary();
+
+    modal.remove();
+  
+  });
+
+};
+
 const handleCalculateShipping = (priceShipping) => {
   const shippingCostsElement = document.getElementById('priceShipping');
   const totalPriceElement = document.getElementById('total');
@@ -85,10 +139,24 @@ const handleCalculateShipping = (priceShipping) => {
 };
 
 const handleFinishPurchase = () => {
-  if (!selectedPostalCode.value) {
-    showToast('error', 'Seleccioná un Código Postal', 'Debes seleccionar el código postal correspondiente a tu provincia.', mainContainer);
+  if (!selectedPostalCode.value || !productsInCart.length) {
+    if (!selectedPostalCode.value) {
+      showToast('error', 'Seleccioná un código postal', 'Debes seleccionar el código postal correspondiente a tu provincia.', mainContainer);
 
+      return;
+
+    };
+
+    if (!productsInCart.length) {
+      showToast('error', 'No hay productos en el carrito', 'Debes agregar productos al carrito para finalizar la compra.', mainContainer);
+
+      return;
+
+    };
+  
   };
+
+  showPurchaseSuccessModal();
 
 };
 
