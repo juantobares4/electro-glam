@@ -375,7 +375,7 @@ const myCart = (event) => {
               <div class="modal-footer">
                 <h6 class="me-2" id="totalCart"></h6>
                 <button disabled id="confirmPurchaseBtn" type="button" class="btn border-1 border-black rounded-0 button-products" data-bs-dismiss="modal">
-                  <a class="text-success fw-bold" href="/pages/checkout/index.html">
+                  <a class="text-success fw-bold" href="/pages/checkout/">
                     Comprar
                   </a>
                 </button>
